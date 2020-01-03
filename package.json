@@ -13,6 +13,14 @@
     "git hooks",
     "pre-commit"
   ],
+  "bugs": {
+    "email": "angck@foxmail.com",
+    "url": "https://github.com/angck/commitlint-increment/issues"
+  },
+  "homepage": "https://github.com/angck/commitlint-increment#readme",
+  "repository": {
+    "url": "https://github.com/angck/commitlint-increment.git"
+  },
   "author": {
     "name": "wangzhixiang",
     "email": "angck@foxmail.com"
