@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+const path = require('path')
+const fs = require('fs')
+const mkdirp = require('mkdirp')
+const CLIEngine = require('eslint').CLIEngine
+const { execSync } = require('child_process')
+let exitCode = 0
+
+function printResults (engine, results, format, outputFile) {
+    let formatter
+    let rules
+
+    try {
+        formatter = engine.getFormatter(format)
+        rules = engine.getRules()
+    } catch (e) {
+        console.error(e.message)
+        return false
+    }
+
+    const rulesMeta = {}
+
+    rules.forEach((rule, ruleId) => {
+        rulesMeta[ruleId] = rule.meta
+    })
+
+    const output = formatter(results, { rulesMeta })
+
+    if (output) {
+        if (outputFile) {
+            const filePath = path.resolve(process.cwd(), outputFile)
+
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+                console.error('Cannot write to output file path, it is a directory: %s', outputFile)
+                return false
+            }
+
+            try {
+                mkdirp.sync(path.dirname(filePath))
+                console.writeFileSync(filePath, output)
+            } catch (ex) {
+                console.error('There was a problem writing the output file:\n%s', ex)
+                return false
+            }
+        } else {
+            console.log(output)
+        }
+    }
+
+    return true
+}
+
+const modifyFiles = execSync('git diff --name-only HEAD --stat').toString().split(/[\r\n]/g)
+const needEslintFiles = modifyFiles.filter(file => {
+    const exts = ['.js', '.vue']
+    const extname = path.extname(file)
+    if (file && file.startsWith('src/') && exts.indexOf(extname) !== -1) {
+        return true
+    } else {
+        return false
+    }
+})
+const cli = new CLIEngine({
+    allowInlineConfig: true,
+    useEslintrc: true,
+    configFile: path.resolve(process.cwd(), '.eslintrc.js'),
+    ignore: true
+})
+
+const report = cli.executeOnFiles(needEslintFiles)
+
+if (printResults(cli, report.results, 'stylish')) {
+    exitCode = report.errorCount ? 1 : 0
+}
+
+process.exitCode = exitCode

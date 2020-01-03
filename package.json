@@ -1,0 +1,25 @@
+{
+  "name": "commitlint-increment",
+  "version": "1.0.1",
+  "description": "",
+  "bin": {
+    "gclint": "bin/commitlint"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "git hooks",
+    "pre-commit"
+  ],
+  "author": {
+    "name": "wangzhixiang",
+    "email": "angck@foxmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^6.8.0",
+    "mkdirp": "^0.5.1"
+  }
+}
