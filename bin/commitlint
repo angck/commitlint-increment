@@ -61,11 +61,13 @@ const needEslintFiles = modifyFiles.filter(file => {
         return false
     }
 })
+console.log(path.resolve(process.cwd(), '.eslintrc.js'), path.resolve(process.cwd(), '.eslintignore'))
 const cli = new CLIEngine({
     allowInlineConfig: true,
     useEslintrc: true,
     configFile: path.resolve(process.cwd(), '.eslintrc.js'),
-    ignore: true
+    ignore: true,
+    ignorePath: path.resolve(process.cwd(), '.eslintignore')
 })
 
 const report = cli.executeOnFiles(needEslintFiles)
